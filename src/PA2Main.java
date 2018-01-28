@@ -18,13 +18,16 @@ public class PA2Main {
         String command = args[1];
         // HashMap<String, Integer> flights = countDepartures(input);
         HashMap<String, String> flightInfo = new HashMap<String, String>();
+        HashMap<String, Integer> numOfFlights = calcNumFlights(input);
+
         if (command.equals("MAX")) {
             System.out.println("max");
         } else if (command.equals("DEPARTURES")) {
             flightInfo = calcDepartures(input, flightInfo);
-            // System.out.println("departures");
         } else if (command.equals("LIMIT")) {
-            System.out.println("limit");
+            // check for agrs 2
+            flightInfo = calcLimit(input, flightInfo, numOfFlights,
+                    Integer.parseInt(args[2]));
         }
         // Look at write up to understand the alphabetical sorting
         if (flightInfo != null) {
@@ -33,21 +36,37 @@ public class PA2Main {
         input.close();
     }
 
-    public static HashMap<String, Integer> countDepartures(Scanner in) {
+    public static HashMap<String, Integer> calcNumFlights(Scanner input) {
+        HashMap<String, Integer> numOfFlights = new HashMap<String, Integer>();
 
-        HashMap<String, Integer> airportToNumFlights = new HashMap<String, Integer>();
-        in.nextLine();
+        while (input.hasNextLine()) {
+            String[] info = input.nextLine().split(",");
+            numOfFlights = updateNumInfo(info[2], numOfFlights);
+            numOfFlights = updateNumInfo(info[4], numOfFlights);
+        }
+        return numOfFlights;
+    }
 
-        while (in.hasNextLine()) {
-            String[] info = in.nextLine().split(",");
-            String key = info[2];
-            if (airportToNumFlights.containsKey(key)) {
-                airportToNumFlights.put(key, airportToNumFlights.get(key) + 1);
-            } else {
-                airportToNumFlights.put(key, 1);
+    public static HashMap<String, String> calcLimit(Scanner input,
+            HashMap<String, String> flightInfo,
+            HashMap<String, Integer> numInfo, int limit) {
+
+        for (String key : numInfo.keySet()) {
+            if (numInfo.get(key) > limit) {
+                flightInfo.put(key, String.valueOf(numInfo.get(key)));
             }
         }
-        return airportToNumFlights;
+        return flightInfo;
+    }
+
+    public static HashMap<String, Integer> updateNumInfo(String key,
+            HashMap<String, Integer> numOfFlights) {
+        if (numOfFlights.containsKey(key)) {
+            numOfFlights.put(key, numOfFlights.get(key) + 1);
+        } else {
+            numOfFlights.put(key, 1);
+        }
+        return numOfFlights;
     }
 
     public static HashMap<String, String> calcDepartures(Scanner input,
