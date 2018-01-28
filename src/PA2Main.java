@@ -16,12 +16,21 @@ public class PA2Main {
             System.exit(0);
         }
         String command = args[1];
-        HashMap<String, Integer> flights = countDepartures(input);
-
+        // HashMap<String, Integer> flights = countDepartures(input);
+        HashMap<String, String> flightInfo = new HashMap<String, String>();
+        if (command.equals("MAX")) {
+            System.out.println("max");
+        } else if (command.equals("DEPARTURES")) {
+            flightInfo = calcDepartures(input, flightInfo);
+            // System.out.println("departures");
+        } else if (command.equals("LIMIT")) {
+            System.out.println("limit");
+        }
         // Look at write up to understand the alphabetical sorting
-        display(flights, command);
+        if (flightInfo != null) {
+            display(flightInfo, command);
+        }
         input.close();
-        // System.out.println(command);
     }
 
     public static HashMap<String, Integer> countDepartures(Scanner in) {
@@ -41,8 +50,24 @@ public class PA2Main {
         return airportToNumFlights;
     }
 
+    public static HashMap<String, String> calcDepartures(Scanner input,
+            HashMap<String, String> flightInfo) {
+        input.nextLine();
+        while (input.hasNextLine()) {
+            String[] info = input.nextLine().split(",");
+            String key = info[2];
+            String flight = info[4];
+            if (flightInfo.containsKey(key)) {
+                flightInfo.put(key, flightInfo.get(key) + " " + flight);
+            } else {
+                flightInfo.put(key, flight);
+            }
+        }
+        return flightInfo;
+    }
+
     // just prints HashMap
-    public static void display(HashMap<String, Integer> flights,
+    public static void display(HashMap<String, String> flights,
             String command) {
         String between = "";
         if (command.equals("DEPARTURES")) {
